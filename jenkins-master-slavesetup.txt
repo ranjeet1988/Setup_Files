@@ -9,6 +9,48 @@ apt install jenkins
 systemctl start jenkins
 cat /var/lib/jenkins/secrets/initialAdminPassword
 
+hostname
+hostname maste
+
+su jenkins
+ssh-keygen -t rsa
+
+visudo
+edit and add this line at 101 
+jenkins ALL=(ALL)       NOPASSWD:ALL
+
+vi /etc/ssh/sshd_config
+edit 65 line PasswordAuthentication yes
+
+
+systemctl restart sshd
+mkdir /home/jenkins
+sudo chmod -R 777 /home/jenkins
+ssh-copy-id jenkins@agentIP
+
+cd .ssh/
+cp known_hosts /var/lib/jenkins/.ssh/
+chmod 777 /var/lib/jenkins/.ssh/known_hosts
+
+" Agent: Take amazon linux "
+sudo amazon-linux-extras install java-openjdk11
+useradd jenkins
+passwd jenkins
+ssh-keygen -t rsa
+
+visudo
+edit and add this line at 101 
+jenkins ALL=(ALL)       NOPASSWD:ALL
+
+vi /etc/ssh/sshd_config
+edit 65 line PasswordAuthentication yes
+
+su jenkins
+ssh-keygen -t rsa
+
+
+
+
 
 Create two servers amazon linux
 
