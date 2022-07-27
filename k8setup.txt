@@ -43,9 +43,6 @@ apt update -y
 
 apt install -y kubelet kubeadm  containerd kubectl
   
-# apt-mark hold will prevent the package from being automatically upgraded or removed.
-apt-mark hold kubelet kubeadm kubectl containerd
- 
 4) Configure Containerd.Load the necessary modules for Containerd:
 
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
@@ -86,21 +83,9 @@ systemctl enable kubelet.service
 
 kubeadm init
 
-IF Error
-sudo kubeadm init --cri-socket /run/containerd/containerd.sock
-
-#exit as root user & exeucte as normal ubuntu user
-
-exit
-
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
-
-# To verify, if kubectl is working or not, run the following command.
-
-kubectl get pods -o wide -n kube-system
 
 #You will notice from the previous command, that all the pods are running except one: ‘core-dns’. For resolving this we will install a # pod network. To install the weave pod network, run the following command:
 
@@ -109,34 +94,10 @@ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl versio
 
 kubectl get nodes
 
-kubectl get pods 
-kubectl get pods --all-namespaces
 
-
-# Get token
-
-kubeadm token create --print-join-command
-
-=========================================
-
-NOde Side:
-Add Worker Machines to Kubernates Master
-
-
-Copy kubeadm join token from and execute in Worker Nodes to join to cluster
-
-
-
-kubectl commonds has to be executed in master machine.
-
-Check Nodes 
-=============
-
-kubectl get nodes
-
+==========================
 
 Deploy Sample Application
-==========================
 
 kubectl run nginx-demo --image=nginx --port=80 
 
