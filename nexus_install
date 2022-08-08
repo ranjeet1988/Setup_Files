@@ -5,7 +5,11 @@ mkdir /opt/nexus && cd /opt/nexus
 
 cd /opt/nexus
 
-wget http://www.sonatype.org/downloads/nexus-latest-bundle.tar.gz
+#  wget http://www.sonatype.org/downloads/nexus-latest-bundle.tar.gz
+
+sudo wget -O nexus.tar.gz https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+
+mv nexus.tar.gz nexus-latest-bundle.tar.gz
 
 tar -xzvf nexus-latest-bundle.tar.gz && version=$(ls | grep -v latest | grep 'nexus-' | cut -f'2,3' -d'-') && ln -s nexus-$version nexus
 
