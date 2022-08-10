@@ -23,3 +23,6 @@ vi /opt/nexus/bin/nexus.vmoptions
  change ../sonatype-work to ./sonatype-work
 
 sudo -u nexus /opt/nexus/bin/nexus start
+
+
+cat /opt/nexus/sonatype-work/nexus3/admin.password
