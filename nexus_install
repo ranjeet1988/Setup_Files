@@ -1,34 +1,25 @@
-install nexus
-yum install -y maven
+apt update
 
-mkdir /opt/nexus && cd /opt/nexus
+apt install openjdk-8-jdk
 
-cd /opt/nexus
+useradd -M -d /opt/nexus -s /bin/bash -r nexus
 
-#  wget http://www.sonatype.org/downloads/nexus-latest-bundle.tar.gz
+echo "nexus   ALL=(ALL)       NOPASSWD: ALL" > /etc/sudoers.d/nexus
 
-sudo wget -O nexus.tar.gz https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+wget https://sonatype-download.global.ssl.fastly.net/repository/downloads-prod-group/3/nexus-3.29.2-02-unix.tar.gz
 
-mv nexus.tar.gz nexus-latest-bundle.tar.gz
+mkdir /opt/nexus
 
-tar -xzvf nexus-latest-bundle.tar.gz && version=$(ls | grep -v latest | grep 'nexus-' | cut -f'2,3' -d'-') && ln -s nexus-$version nexus
+tar xzf nexus-3.29.2-02-unix.tar.gz -C /opt/nexus --strip-components=1
 
-cp /opt/nexus/nexus/bin/nexus /etc/init.d/
+11  ls /opt/nexus/
 
-sed -i.bak -e 's/NEXUS_HOME=".."/NEXUS_HOME="/opt/nexus/nexus"/' /etc/init.d/nexus
+chown -R nexus: /opt/nexus
 
-sed -i.bak -e 's|nexus-webapp-context-path=/nexus|nexus-webapp-context-path=/|' /opt/nexus/nexus/conf/nexus.properties
+vi /opt/nexus/bin/nexus.rc
+ run_as_user="nexus"
+ 
+vi /opt/nexus/bin/nexus.vmoptions
+ change ../sonatype-work to ./sonatype-work
 
-useradd nexus
-
-chown -R nexus:nexus /opt/nexus/ && sudo chown nexus:nexus /etc/init.d/nexus
-
-sed -i.bak -e 's/#RUN_AS_USER=/RUN_AS_USER=nexus/' /etc/init.d/nexus
-
-systemctl stop firewalld && sudo systemctl disable firewalld
-
-echo 'RUN_AS_USER=nexus' >> /etc/environment && export RUN_AS_USER=nexus
-
-systemctl daemon-reload
-
-/etc/init.d/nexus start && chkconfig nexus on
+sudo -u nexus /opt/nexus/bin/nexus start
